@@ -1,0 +1,7 @@
+schema: workflow/2022.04
+name: Create Org from Salesforce
+settings:
+  error_notification: true
+triggers:
+- id: dc_eKuvj0L
+

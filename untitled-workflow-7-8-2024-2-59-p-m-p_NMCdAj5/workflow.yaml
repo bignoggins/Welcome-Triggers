@@ -1,0 +1,20 @@
+schema: workflow/2022.04
+name: Untitled Workflow - 7/8/2024, 2:59 p.m.
+settings:
+  error_notification: true
+triggers:
+- id: sub_4WUdbz4
+  uses: sc_k3irrqw
+  props:
+    field:
+      __lv:
+        label: StageName
+        value: StageName
+    fieldUpdatedTo: closed
+    objectType:
+      __lv:
+        label: Opportunity
+        value: Opportunity
+    salesforce:
+      authProvisionId: apn_yghKnZV
+

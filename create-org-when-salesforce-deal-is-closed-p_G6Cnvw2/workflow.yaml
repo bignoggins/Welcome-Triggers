@@ -1,0 +1,47 @@
+schema: workflow/2022.04
+name: Create org when Salesforce Deal is closed
+settings:
+  auto_retry: true
+  concurrency: 1
+  error_notification: true
+  lambda_memory: 512
+triggers:
+- id: sub_9qUqm07
+  uses: sc_k3irrqw
+  props:
+    field:
+      __lv:
+        label: StageName
+        value: StageName
+    fieldUpdatedTo: Closed Won
+    objectType:
+      __lv:
+        label: Opportunity
+        value: Opportunity
+    salesforce:
+      authProvisionId: apn_yghKnZV
+steps:
+- namespace: custom_request
+  runtime: nodejs20.x
+  uses: http-custom-request@1.1.1
+  props:
+    httpRequest:
+      auth:
+        type: bearer
+        username: ''
+        password: ''
+        token: ''
+      body:
+        contentType: none
+        fields: []
+        mode: fields
+        type: raw
+      headers: []
+      method: POST
+      params:
+      - name: ''
+        value: ''
+        disabled: true
+      url: ''
+      tab: Auth
+
