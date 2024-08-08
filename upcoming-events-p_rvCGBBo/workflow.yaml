@@ -1,0 +1,28 @@
+schema: workflow/2022.04
+name: Upcoming Events
+settings:
+  error_notification: true
+  lambda_memory: 512
+triggers:
+- id: ti_KbTBPdM
+steps:
+- namespace: next_2_weeks_of_events
+  runtime: nodejs20.x
+  uses: google_cloud-run-query@0.0.1
+  props:
+    googleCloud:
+      authProvisionId: apn_pxhpP1y
+    query: "SELECT \n    e.name AS event_name, \n    e.registrations_count, \n    e.id
+      AS event_id,\n    DATETIME(TIMESTAMP(e.start_time), 'America/New_York') AS start_time_ny,\n
+      \   o.name AS organization_name,\n    o.id AS organization_id\nFROM \n    `adair-prod.adair_prod_public.events`
+      e\nLEFT JOIN \n    `adair-prod.adair_prod_public.organizations` o\nON \n    e.organization_id
+      = o.id\nWHERE \n    e.start_time BETWEEN CURRENT_DATETIME() AND \n    DATETIME_ADD(CURRENT_DATETIME(),
+      INTERVAL 14 DAY)\n    AND e.registrations_count > 9\nORDER BY \n    e.start_time
+      ASC"
+- namespace: send_slack_msg
+  runtime: nodejs20.x
+  uses: "./send_slack_msg/entry.js"
+  props:
+    slack:
+      authProvisionId: apn_vMhoYOb
+
