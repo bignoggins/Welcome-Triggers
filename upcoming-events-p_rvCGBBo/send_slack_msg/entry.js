@@ -25,19 +25,21 @@ export default defineComponent({
       return acc;
     }, {});
 
-    // Format the message
-    let message = ":calendar: _*UPCOMING EVENTS*_ :calendar:\n\n";
+    // Format the messages
+    let thisWeekMessage = ":calendar: **UPCOMING EVENTS** :calendar:\n\n*THIS WEEK*\n\n";
+    let nextWeekMessage = "*NEXT WEEK*\n\n";
+    
     const weeks = Object.keys(groupedEvents).sort();
     
     weeks.forEach((week, index) => {
-      message += index === 0 ? "*THIS WEEK*\n\n" : "*NEXT WEEK*\n\n";
+      let currentMessage = index === 0 ? thisWeekMessage : nextWeekMessage;
       
       const days = Object.keys(groupedEvents[week]).sort((a, b) => 
         moment(a, 'dddd').day() - moment(b, 'dddd').day()
       );
       
       days.forEach(day => {
-        message += `*${day}*\n`;
+        currentMessage += `*${day}*\n`;
         groupedEvents[week][day].sort((a, b) => 
           moment(a.start_time_ny.value).diff(moment(b.start_time_ny.value))
         ).forEach(event => {
@@ -45,27 +47,40 @@ export default defineComponent({
           const eventLink = `https://app.experiencewelcome.com/admin/events/${event.event_id}`;
           const orgLink = `https://app.experiencewelcome.com/admin/organizations/${event.organization_id}`;
           
-          message += `• ${eventTime.format('h:mm A')} ET - <${eventLink}|${event.event_name}> (<${orgLink}|*${event.organization_name}*>), `;
-          message += `  _${event.registrations_count} registrations_\n`;
-          
+          currentMessage += `• ${eventTime.format('h:mm A')} ET - <${eventLink}|${event.event_name}> (<${orgLink}|*${event.organization_name}*>), `;
+          currentMessage += `  ${event.registrations_count} registrations\n`;
         });
-        message += "\n";
+        currentMessage += "\n";
       });
+      
+      if (index === 0) {
+        thisWeekMessage = currentMessage;
+      } else {
+        nextWeekMessage = currentMessage;
+      }
     });
 
-    // Send the message to Slack
+    // Create Slack message with two blocks
     const slackMessage = {
       blocks: [
         {
           type: "section",
           text: {
             type: "mrkdwn",
-            text: message
+            text: thisWeekMessage.trim()
+          }
+        },
+        {
+          type: "section",
+          text: {
+            type: "mrkdwn",
+            text: nextWeekMessage.trim()
           }
         }
       ]
     };
 
+    // Send the message to Slack
     return await axios($, {
       method: 'post',
       url: `https://slack.com/api/chat.postMessage`,
@@ -73,7 +88,6 @@ export default defineComponent({
         Authorization: `Bearer ${this.slack.$auth.oauth_access_token}`,
         'Content-Type': 'application/json',
       },
-      
       data: {
         channel: 'C051GUMRN4D',
         username: 'Welcome Events',
