@@ -1,5 +1,6 @@
 schema: workflow/2022.04
 name: Create Org from Salesforce
+inactive: true
 settings:
   error_notification: true
   lambda_memory: 512
