@@ -1,5 +1,6 @@
 schema: workflow/2022.04
 name: Create org when Salesforce Deal is closed
+inactive: true
 settings:
   auto_retry: true
   concurrency: 1
