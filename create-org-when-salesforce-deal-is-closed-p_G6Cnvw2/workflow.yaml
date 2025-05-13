@@ -3,8 +3,8 @@ name: Create org when Salesforce Deal is closed
 settings:
   auto_retry: true
   concurrency: 1
-  error_notification: true
   lambda_memory: 512
+  notification_on_first_error: true
 triggers:
 - id: sub_9qUqm07
   uses: sc_k3irrqw
